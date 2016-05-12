@@ -12,45 +12,50 @@
   </head>
   <body>
 <?php
-// include "/inc/Requests.php";
 require "inc/Wufoo-PHP-API-Wrapper/WufooApiWrapper.php";
 require "inc/pipedrive.php";
-// include "/http.php";
-
+// Wufoo
 $apiKey = '6393-IH1D-O54P-6NB1';
 $subdomain = 'bradelcanfield';
 
-// // curl -u 6393-IH1D-O54P-6NB1:footastic https://bradelcanfield.wufoo.com/api/v3/forms/untitled-form/entries.json?pretty=true
-
-// ***************************************************
-
-// getting the form entries json back from the Wufoo api
+// getting the form entries back from the Wufoo api and encoded to json
 $wrapper = new WufooApiWrapper($apiKey, $subdomain);
 $entries = $wrapper->getEntries('untitled-form');
 $json = json_encode($entries, JSON_PRETTY_PRINT);
-// echo $json;
 
-$someArray = json_decode($json, true);
+// decoding JSON data
+$form_data = json_decode($json, true);
+$data = json_decode($someJSON);
 
-$someObject = json_decode($someJSON);
-
-foreach ($someArray as $key => $value) {
+// looping through all of the data to only give back the first name and last name fields of all form entries
+foreach ($form_data as $key => $value) {
     echo $value["Field1"] . "\n" . $value["Field2"] . "<br>";
 }
 
-$first_names = array_column($entries, 'first_name', 'id');
-print_r($first_names);
+$first_name = $value["Field1"];
+$last_name = $value["Field2"];
 
-// foreach ($entries as $entry) {
-//   echo $entry{["Field1"]};
-// }
-// {
-//     $entries[$key] = $row['Field1'];
-// }
-// array_multisort($first_name, SORT_DESC, $entries);
+// ******************************************************************************************************
+// Pipedrive
+$url = 'https://api.pipedrive.com/v1/persons?api_token=0f6acf75a1d4bddda9f46fa6c30f4e675e806d3f';
+
+$lead_name = array('name' => $first_name . "\n" . $last_name);
+// Build Http query using $lead_name params
+$query = http_build_query($lead_name);
+// Create Http context details
+$contextData = array(
+    'method' => 'POST',
+    'header' => "Connection: close\r\n" .
+    "Content-Length: " . strlen($query) . "\r\n",
+    'content' => $query);
+// Create context resource for the request
+$context = stream_context_create(array('http' => $contextData));
+// Read page rendered as result of the POST request
+$result = file_get_contents(
+    $url, // page url
+    false,
+    $context);
 
 ?>
-
-
   </body>
 </html>
