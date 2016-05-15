@@ -42,24 +42,24 @@ $last_name = $value["Field2"];
 
 // ******************************************************************************************************
 // Pipedrive
-// $url = 'https://api.pipedrive.com/v1/persons?api_token=0f6acf75a1d4bddda9f46fa6c30f4e675e806d3f';
+$url = 'https://api.pipedrive.com/v1/persons?api_token=0f6acf75a1d4bddda9f46fa6c30f4e675e806d3f';
 
-// $lead_name = array('name' => $first_name . "\n" . $last_name);
-// // Build Http query using $lead_name params
-// $query = http_build_query($lead_name);
-// // Create Http context details
-// $contextData = array(
-//     'method' => 'POST',
-//     'header' => "Connection: close\r\n" .
-//     "Content-Length: " . strlen($query) . "\r\n",
-//     'content' => $query);
-// // Create context resource for the request
-// $context = stream_context_create(array('http' => $contextData));
-// // Read page rendered as result of the POST request
-// $result = file_get_contents(
-//     $url, // page url
-//     false,
-//     $context);
+$lead_name = array('name' => $first_name . "\n" . $last_name);
+// Build Http query using $lead_name params
+$query = http_build_query($lead_name);
+// Create Http context details
+$contextData = array(
+    'method' => 'POST',
+    'header' => "Connection: close\r\n" .
+    "Content-Length: " . strlen($query) . "\r\n",
+    'content' => $query);
+// Create context resource for the request
+$context = stream_context_create(array('http' => $contextData));
+// Read page rendered as result of the POST request
+$result = file_get_contents(
+    $url, // page url
+    false,
+    $context);
 
 ?>
 <h1>hello</h1>
